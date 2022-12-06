@@ -36,10 +36,31 @@ from sklearn.metrics import classification_report
 from ann import basicANN
 from kmedoid import kmcall
 from kmeancluster import kmeanscluster
-
+from pagerank import pgrank_res,HIT_res
+from crawler import bfscrawl,dfscrawl
+from dbscan import dbscanres
 eel.init("web")
 
 # df = pd.read_excel('iris.xlsx')
+
+@eel.expose
+def dbres(ep,mp):
+    return dbscanres(float(ep),float(mp))
+
+@eel.expose
+def crawl(url,type):
+    if(type=="bfs"):
+        return bfscrawl(url)
+    else:
+        return dfscrawl(url)
+
+@eel.expose
+def pgrank(itr,dump):
+    return pgrank_res(int(itr),float(dump))
+
+@eel.expose
+def hits(itr):
+    return HIT_res(int(itr))
 
 
 def findMean(col):
@@ -712,25 +733,25 @@ def hicluster(clust,itr):
     print(clust,itr)
     return hcluster(int(clust))
 
-# from association_rules import generate_rule
+from association_rules import generate_rule
 
-# def read_data_in_dict(filename):
-#     f = open(filename)
-#     lines = f.readlines()
-#     transactions = []
-#     items = lines[0].split(',')
-#     for line in lines[1:]:
-#         transactions.append(list(map(int,line.split(','))))
-#     data ={
-#         'items':items,
-#         'transactions':transactions
-#     }
-#     return data
+def read_data_in_dict(filename):
+    f = open(filename)
+    lines = f.readlines()
+    transactions = []
+    items = lines[0].split(',')
+    for line in lines[1:]:
+        transactions.append(list(map(int,line.split(','))))
+    data ={
+        'items':items,
+        'transactions':transactions
+    }
+    return data
     
-# @eel.expose
-# def aproiri(sup,conf):
-#     data = read_data_in_dict('itemsets.csv')
-#     return generate_rule(data,float(sup),float(conf))
+@eel.expose
+def aproiri(sup,conf):
+    data = pd.read_csv('itemsets.csv')
+    return generate_rule(data,float(sup),float(conf))
     
 
 

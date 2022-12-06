@@ -66,27 +66,17 @@
                                 <a class="dropdown-item" href="kmean.html">K-Means Clustering</a>
                                 <a class="dropdown-item" href="kmedoid.html">K-Medoid Clustering</a>
                                 <a class="dropdown-item" href="hierar.html">Hierarchical Clustering</a>
-                                <a class="dropdown-item" href="dbscan.html">DBScan</a>
                                 <a class="dropdown-item" href="aproiri.html">Apriori Rule</a>
                                 
                                
                             </div>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Web Mining 
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="crawler.html">Crawler </a>
-                                <a class="dropdown-item" href="pagerank.html">Page Rank Algorithm</a>
-                                <a class="dropdown-item" href="hits.html">HITS Algorithm</a>
-                                
-                               
-                            </div>
-                        </li>
 
-                       
+                        <!-- <a class="nav-link" href="#certification">Certifications</a>
+                        <a class="nav-link" href="#projects">Projects</a>
+                        <a class="nav-link" href="#achievements">Achievements</a>
+                        <a class="nav-link" href="#intro">Video Intro</a>
+                        <a class="nav-link" href="#contact">Contact Me</a> -->
 
 
                     </div>
@@ -97,24 +87,25 @@
         <h1>Data Mining Tool</h1>
         <div class="row box" id="contact">
             <div class="col-sm-6">
-                <h2>Aproiri Rule Generation</h2>
+                <h2>DBSCAN Clustering </h2>
+                
 
                 <label>
-                    Confidence
+                    Min no. of Points in Cluster
                 </label>
                 <br />
-                <input placeholder="" class="form-control" type="number" id='columns' />
+                <input placeholder="K Value " class="form-control" type="number" id='columns' />
                 <br />
                 <label>
-                    Support
+                    Epsilon
                 </label>
                 <br />
-                <input placeholder="" class="form-control" type='number' id='operation' />
+                <input placeholder="Test size" class="form-control" type='text' id='operation' />
                 <br />
 
                 <br />
 
-                <button class="btn btn-primary mb-2" onclick="getKNN(7)">
+                <button class="btn btn-primary mb-2" onclick="getKNN(11)">
                     Submit
                 </button>
                 <br />

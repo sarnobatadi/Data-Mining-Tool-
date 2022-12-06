@@ -170,10 +170,35 @@ async function getKNN(flg){
         var res = await eel.aproiri(colName,operationName)()
         document.getElementById("result").value = res
     }
-    // else{
-    //     var res = await eel.knn_classifier(colName,operationName)()
-    //     document.getElementById("result").value = res
-    // }
+    if(flg === 8)
+    {
+        var colName = document.getElementById('columns').value ;
+        var operationName = document.getElementById('operation').value
+        var res = await eel.pgrank(colName,operationName)()
+        document.getElementById("result").value = res
+    }
+    if(flg === 9)
+    {
+        var colName = document.getElementById('columns').value ;
+        // var operationName = document.getElementById('operation').value
+        var res = await eel.hits(colName)()
+        document.getElementById("result").value = res
+    }
+    if(flg === 10)
+    {
+        var colName = document.getElementById('columns').value ;
+        var operationName = document.getElementById('operation').value
+        var res = await eel.crawl(colName,operationName)()
+        document.getElementById("result").value = res
+    }
+    if(flg === 11)
+    {
+        var colName = document.getElementById('columns').value ;
+        var operationName = document.getElementById('operation').value
+        var res = await eel.dbres(colName,operationName)()
+        document.getElementById("result").value = res
+    }
+    
     
 
 }

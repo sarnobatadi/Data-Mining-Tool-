@@ -63,5 +63,5 @@ def generate_rule(data,min_support,min_confidence):
     return res
 
 
-data = read_data_in_dict('itemsets.csv')
+# data = read_data_in_dict('itemsets.csv')
 # generate_rule('itemsets.csv',0.3,0.4)

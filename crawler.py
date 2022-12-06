@@ -9,7 +9,8 @@ def is_valid(url):
 urls = []
 
 
-def dfscrawl():
+def dfscrawl(url):
+    res = ""
     #Depth First Search
     url = 'https://softa.org.in/'
     reqs = requests.get(url)
@@ -17,42 +18,54 @@ def dfscrawl():
     for link in soup.find_all('a'):
         weblink = link.get('href')
         if(is_valid(weblink)):
-            print("\nNode  : ",str(weblink))
+            # print("\nNode  : ",str(weblink))
+            res +="\nNode  : " + str(weblink)
             reqs = requests.get(weblink)
             nextsoup = BeautifulSoup(reqs.text, 'html.parser')
             print("\nExploring Node  : ")
-            
+            res +="\nExploring Node  : "
             for link in nextsoup.find_all('a'):
                 weblink = link.get('href')
                 if(is_valid(weblink)):
-                    print(weblink)
+                    # print(weblink)
+                    res += "\n" + str(weblink)
+    print(res)
+    return res
 
-
-def bfscrawl():              
-    url = 'https://softa.org.in/'
+def bfscrawl(url):              
+    # url = 'https://softa.org.in/'
+    res = ""
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
     #Breadth First Search
     print("All Weblinks of Seed Link : ")
+    res += "All Weblinks of Seed Link : "
     for link in soup.find_all('a'):
         weblink = link.get('href')
         
         if(is_valid(weblink)): 
             print(str(weblink))
+            res += "\n" + str(weblink)
             urls.append(weblink)
 
     for link in urls:
         reqs = requests.get(link)
         soup = BeautifulSoup(reqs.text, 'html.parser')
         print("\nAll Weblinks of: ",str(link))
+        res += "All Weblinks of Seed Link : " + str(link)
         for l in soup.find_all('a'):
             weblink = l.get('href')
             
             if(is_valid(weblink)):
-                print(weblink)
+                res += "\n" + str(weblink)
+                # print(weblink)
+    print(res)
+    return res
                 
                 
             
             
 
         
+# dfscrawl('https://softa.org.in/')
+# bfscrawl('https://softa.org.in/')

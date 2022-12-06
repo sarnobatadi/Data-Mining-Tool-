@@ -1,70 +1,135 @@
-def pagerank(G, alpha=0.85, personalization=None,
-			max_iter=100, tol=1.0e-6, nstart=None, weight='weight',
-			dangling=None):
+import requests
+from urllib.parse import urlparse, urljoin
+from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+from Graph import Graph
+import eel
+
+def init_graph(file):
+        
+	def split(line):
+		str = ""
+		flag = False
+		for j in line:
+			if not flag and j=='	':
+				str = str+','
+				flag = True
+			else:
+				str = str+j
+		return str.split(',')
+
+	f = open(file)
+	lines = f.readlines()
+
+	graph = Graph()
+
+	for line in lines: 
+		[parent, child] = split(line)
+					
+		graph.add_edge(parent, child)
+
+		graph.sort_nodes()
+
+	return graph
+
+
+def PageRank_one_iter(graph, d):
+	node_list = graph.nodes
+	# print(node_list)
+	for node in node_list:
+		node.update_pagerank(d, len(graph.nodes))
+	graph.normalize_pagerank()
+	# print(graph.get_pagerank_list())
+	# print()
+
+def HITS_one_iter(graph):
+	node_list = graph.nodes
+
+	for node in node_list:
+		node.update_auth()
+
+	for node in node_list:
+		node.update_hub()
+
+	graph.normalize_auth_hub()
+
+
+def HITS(graph, iteration=100):
+	for i in range(iteration):
+		HITS_one_iter(graph)
+		# graph.display_hub_auth()
+		# print()
+
+
+
+
+def PageRank(iteration,graph, d):
+	for i in range(int(iteration)):
+		# print(i)
+		PageRank_one_iter(graph, d)
+
+
+def pgrank_res(itr,damp_fact):
+
+	iteration = itr
+	damping_factor = damp_fact
+	file = "pgrank.txt"
+	graph = init_graph(file)
+
+	nodes = graph.nodes
+
+	PageRank(iteration, graph, damping_factor)
+
+	ranks_by_nodes = []
+	page_ranks = graph.get_pagerank_list()
+
+	for i in range(len(nodes)):
+		ranks_by_nodes.append([nodes[i].name,[child.name for child in nodes[i].children],[parent.name for parent in nodes[i].parents],page_ranks[i]])
+
+
+	df = pd.DataFrame(ranks_by_nodes,columns=["Node","Children","parents","Page Rank"])
+	df = df.sort_values(by=["Page Rank","Node"],ascending=False)
 	
-	if len(G) == 0:
-		return {}
+	res = ""
+	res += str(df.head(10))
+	# table = st.table(df)
 
-	if not G.is_directed():
-		D = G.to_directed()
-	else:
-		D = G
+	res +="\nTotal page rank sum: "+str(np.sum(graph.get_pagerank_list()))
+	print(res)
+	return res
 
-	# Create a copy in (right) stochastic form
-	W = nx.stochastic_graph(D, weight=weight)
-	N = W.number_of_nodes()
 
-	# Choose fixed starting vector if not given
-	if nstart is None:
-		x = dict.fromkeys(W, 1.0 / N)
-	else:
-		# Normalized nstart vector
-		s = float(sum(nstart.values()))
-		x = dict((k, v / s) for k, v in nstart.items())
+def HIT_res(itr):
 
-	if personalization is None:
+	iteration = itr
+	file = "pgrank.txt"
+	graph = init_graph(file)
 
-		# Assign uniform personalization vector if not given
-		p = dict.fromkeys(W, 1.0 / N)
-	else:
-		missing = set(G) - set(personalization)
-		if missing:
-			raise NetworkXError('Personalization dictionary '
-								'must have a value for every node. '
-								'Missing nodes %s' % missing)
-		s = float(sum(personalization.values()))
-		p = dict((k, v / s) for k, v in personalization.items())
+	HITS(graph,iteration)
+	auth_list, hub_list = graph.get_auth_hub_list()
 
-	if dangling is None:
+	nodes = [node.name for node in graph.nodes]
 
-		# Use personalization vector if dangling vector not specified
-		dangling_weights = p
-	else:
-		missing = set(G) - set(dangling)
-		if missing:
-			raise NetworkXError('Dangling node dictionary '
-								'must have a value for every node. '
-								'Missing nodes %s' % missing)
-		s = float(sum(dangling.values()))
-		dangling_weights = dict((k, v/s) for k, v in dangling.items())
-	dangling_nodes = [n for n in W if W.out_degree(n, weight=weight) == 0.0]
+	my_data = []
 
-	# power iteration: make up to max_iter iterations
-	for _ in range(max_iter):
-		xlast = x
-		x = dict.fromkeys(xlast.keys(), 0)
-		danglesum = alpha * sum(xlast[n] for n in dangling_nodes)
-		for n in x:
+	# print(hub_list)
+	for i in range(len(nodes)):
+		my_data.append([nodes[i],auth_list[i],hub_list[i]])
 
-			# this matrix multiply looks odd because it is
-			# doing a left multiply x^T=xlast^T*W
-			for nbr in W[n]:
-				x[nbr] += alpha * xlast[n] * W[n][nbr][weight]
-			x[n] += danglesum * dangling_weights[n] + (1.0 - alpha) * p[n]
+	df = pd.DataFrame(my_data,columns=["Node","Auth Value","Hub Value"])
 
-		# check convergence, l1 norm
-		err = sum([abs(x[n] - xlast[n]) for n in x])
-		if err < N*tol:
-			return x
-	raise NetworkXError('pagerank: power iteration failed to converge '
-						'in %d iterations.' % max_iter)
+	df = df.sort_values(["Auth Value","Hub Value"],ascending=False)
+	# table = st.table(df)
+	# for i in df:
+	# 	print(i)
+	# print(df)
+	res = ""
+	res += str(df.head(10))
+	res += "Sum of Auth : "+ str(sum(auth_list)) + "\nSum of Hub List : " + str(sum(hub_list))
+	print(res)
+	# print(sum(auth_list)," ",sum(hub_list))
+	return res
+
+# HIT_res(1)
+pgrank_res(1,0.15)
