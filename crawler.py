@@ -12,7 +12,7 @@ urls = []
 def dfscrawl(url):
     res = ""
     #Depth First Search
-    url = 'https://softa.org.in/'
+    url = ''
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, 'html.parser')
     for link in soup.find_all('a'):

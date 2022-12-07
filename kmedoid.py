@@ -53,7 +53,6 @@ class KMedoids:
                 classification = distances.index(min(distances))
                 self.classifications[classification].append(featureset)
         return res
-
     def predict(self, data):
         distances = [np.linalg.norm(data - self.medoids[medoid]) for medoid in self.medoids]
         classification = distances.index(min(distances))
